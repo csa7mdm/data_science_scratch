@@ -127,8 +127,131 @@ def filter_by_regular(filename):
     # your code here
     # more of your code here
     return turnstile_data[turnstile_data['DESCn'] == 'REGULAR']
+
+
+
+def get_hourly_entries(df):
+    '''
+    The data in the MTA Subway Turnstile data reports on the cumulative
+    number of entries and exits per row.  Assume that you have a dataframe
+    called df that contains only the rows for a particular turnstile machine
+    (i.e., unique SCP, C/A, and UNIT).  This function should change
+    these cumulative entry numbers to a count of entries since the last reading
+    (i.e., entries since the last row in the dataframe).
     
+    More specifically, you want to do two things:
+       1) Create a new column called ENTRIESn_hourly
+       2) Assign to the column the difference between ENTRIESn of the current row 
+          and the previous row. If there is any NaN, fill/replace it with 1.
+    
+    You may find the pandas functions shift() and fillna() to be helpful in this exercise.
+    
+    Examples of what your dataframe should look like at the end of this exercise:
+    
+           C/A  UNIT       SCP     DATEn     TIMEn    DESCn  ENTRIESn    EXITSn  ENTRIESn_hourly
+    0     A002  R051  02-00-00  05-01-11  00:00:00  REGULAR   3144312   1088151                1
+    1     A002  R051  02-00-00  05-01-11  04:00:00  REGULAR   3144335   1088159               23
+    2     A002  R051  02-00-00  05-01-11  08:00:00  REGULAR   3144353   1088177               18
+    3     A002  R051  02-00-00  05-01-11  12:00:00  REGULAR   3144424   1088231               71
+    4     A002  R051  02-00-00  05-01-11  16:00:00  REGULAR   3144594   1088275              170
+    5     A002  R051  02-00-00  05-01-11  20:00:00  REGULAR   3144808   1088317              214
+    6     A002  R051  02-00-00  05-02-11  00:00:00  REGULAR   3144895   1088328               87
+    7     A002  R051  02-00-00  05-02-11  04:00:00  REGULAR   3144905   1088331               10
+    8     A002  R051  02-00-00  05-02-11  08:00:00  REGULAR   3144941   1088420               36
+    9     A002  R051  02-00-00  05-02-11  12:00:00  REGULAR   3145094   1088753              153
+    10    A002  R051  02-00-00  05-02-11  16:00:00  REGULAR   3145337   1088823              243
+    ...
+    ...
+
+    '''
+    
+    
+    df['ENTRIESn_hourly'] = df['ENTRIESn'] - df.shift(1)['ENTRIESn']
+    df['ENTRIESn_hourly'] = df['ENTRIESn_hourly'].fillna(0)
+    
+    return df
+
+
+def get_hourly_exits(df):
+    '''
+    The data in the MTA Subway Turnstile data reports on the cumulative
+    number of entries and exits per row.  Assume that you have a dataframe
+    called df that contains only the rows for a particular turnstile machine
+    (i.e., unique SCP, C/A, and UNIT).  This function should change
+    these cumulative exit numbers to a count of exits since the last reading
+    (i.e., exits since the last row in the dataframe).
+    
+    More specifically, you want to do two things:
+       1) Create a new column called EXITSn_hourly
+       2) Assign to the column the difference between EXITSn of the current row 
+          and the previous row. If there is any NaN, fill/replace it with 0.
+    
+    You may find the pandas functions shift() and fillna() to be helpful in this exercise.
+    
+    Example dataframe below:
+
+          Unnamed: 0   C/A  UNIT       SCP     DATEn     TIMEn    DESCn  ENTRIESn    EXITSn  ENTRIESn_hourly  EXITSn_hourly
+    0              0  A002  R051  02-00-00  05-01-11  00:00:00  REGULAR   3144312   1088151                0              0
+    1              1  A002  R051  02-00-00  05-01-11  04:00:00  REGULAR   3144335   1088159               23              8
+    2              2  A002  R051  02-00-00  05-01-11  08:00:00  REGULAR   3144353   1088177               18             18
+    3              3  A002  R051  02-00-00  05-01-11  12:00:00  REGULAR   3144424   1088231               71             54
+    4              4  A002  R051  02-00-00  05-01-11  16:00:00  REGULAR   3144594   1088275              170             44
+    5              5  A002  R051  02-00-00  05-01-11  20:00:00  REGULAR   3144808   1088317              214             42
+    6              6  A002  R051  02-00-00  05-02-11  00:00:00  REGULAR   3144895   1088328               87             11
+    7              7  A002  R051  02-00-00  05-02-11  04:00:00  REGULAR   3144905   1088331               10              3
+    8              8  A002  R051  02-00-00  05-02-11  08:00:00  REGULAR   3144941   1088420               36             89
+    9              9  A002  R051  02-00-00  05-02-11  12:00:00  REGULAR   3145094   1088753              153            333
+    '''
+    
+    df['EXITSn_hourly'] = df['EXITSn'] - df.shift(1)['EXITSn']
+    df['EXITSn_hourly'] = df['EXITSn_hourly'].fillna(0)
+    return df
+    
+    
+def time_to_hour(time):
+    '''
+    Given an input variable time that represents time in the format of:
+    "00:00:00" (hour:minutes:seconds)
+    
+    Write a function to extract the hour part from the input variable time
+    and return it as an integer. For example:
+        1) if hour is 00, your code should return 0
+        2) if hour is 01, your code should return 1
+        3) if hour is 21, your code should return 21
+        
+    Please return hour as an integer.
+    '''
+    
+    hour = time.split(':')[0]
+    return hour
+
+
+import datetime
+
+def reformat_subway_dates(date):
+    '''
+    The dates in our subway data are formatted in the format month-day-year.
+    The dates in our weather underground data are formatted year-month-day.
+    
+    In order to join these two data sets together, we'll want the dates formatted
+    the same way.  Write a function that takes as its input a date in the MTA Subway
+    data format, and returns a date in the weather underground format.
+    
+    Hint: 
+    There are a couple of useful functions in the datetime library that will
+    help on this assignment, called strptime and strftime. 
+    More info can be seen here and further in the documentation section:
+    http://docs.python.org/2/library/datetime.html#datetime.datetime.strptime
+    '''
+    
+    date_obj = datetime.datetime.strptime(date, '%m-%d-%y')
+    #import pdb; pdb.set_trace()
+    #date_formatted = # your code here
+    return date_obj.strftime('%Y-%m-%d')
+
 
 if __name__ == '__main__':
-    filter_by_regular('updated_turnstile_110528.txt')
+    #get_hourly_entries(filter_by_regular('updated_turnstile_110528.txt'))
     #fix_turnstile_data(['turnstile_110528.txt'])
+    
+    print reformat_subway_dates('05-02-11')
