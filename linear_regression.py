@@ -33,7 +33,9 @@ def compute_cost(features, values, theta):
     but feel free to implement your own.
     """
     
-    # your code here
+    m = len(values)
+    ss_errs = np.square(np.dot(features, theta) - values).sum()
+    cost = ss_errs / (2 * m)
 
     return cost
 
@@ -49,7 +51,9 @@ def gradient_descent(features, values, theta, alpha, num_iterations):
     cost_history = []
 
     for i in range(num_iterations):
-        # your code here
+        theta = theta + (alpha/m) * np.dot((values - np.dot(features, theta)), features)
+        cost_history.append(compute_cost(features, values, theta))
+        
     return theta, pandas.Series(cost_history)
 
 def predictions(dataframe):
