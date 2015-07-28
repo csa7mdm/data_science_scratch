@@ -2,6 +2,8 @@ import numpy as np
 import pandas
 import matplotlib.pyplot as plt
 
+#matplotlib.style.use('ggplot')
+
 def entries_histogram(turnstile_weather):
     '''
     Before we perform any analysis, it might be useful to take a
@@ -24,7 +26,14 @@ def entries_histogram(turnstile_weather):
     https://www.dropbox.com/s/meyki2wl9xfa7yk/turnstile_data_master_with_weather.csv
     '''
     
+    #print turnstile_weather
     plt.figure()
-    turnstile_weather['...'] # your code here to plot a historgram for hourly entries when it is raining
-    turnstile_weather['...'] # your code here to plot a historgram for hourly entries when it is not raining
+    turnstile_weather[turnstile_weather['rain'] == 1]['ENTRIESn_hourly'].plot(kind='hist', alpha=.5) # your code here to plot a historgram for hourly entries when it is raining
+    turnstile_weather[turnstile_weather['rain'] == 0]['ENTRIESn_hourly'].plot(kind='hist', alpha=.5) # your code here to plot a historgram for hourly entries when it is not raining
     return plt
+
+
+if __name__ == '__main__':
+    plt =  entries_histogram(pandas.DataFrame.from_csv("turnstile_data_master_with_weather.csv"))
+    plt.show()
+    #import pdb; pdb.set_trace()
