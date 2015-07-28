@@ -22,10 +22,21 @@ def gradient_descent(features, values, theta, alpha, num_iterations):
     # to cost_history.
     # See the Instructor notes for hints. 
     
+    
     cost_history = []
 
     ###########################
     ### YOUR CODE GOES HERE ###
     ###########################
+    ''' print 'features ->',  features
+    print 'values ->', values
+    print 'theta ->', theta
+    print 'alpha ->', alpha
+    print 'num_iterations ->', num_iterations '''
+    
+    for _ in range(num_iterations):
+        cost_history.append(compute_cost(features, values, theta))
+        theta = theta + (alpha/len(values)) * numpy.dot((values - numpy.dot(features, theta)), features)
+        #break
 
     return theta, pandas.Series(cost_history) # leave this line for the grader
