@@ -1,5 +1,3 @@
-from csv import DictReader
-
 import numpy
 from scipy.stats import ttest_ind
 import pandas
@@ -42,11 +40,11 @@ def compare_averages(filename):
                      equal_var=False)
     
     if p < .05:
-        significance = True
+        difference = False
     else:
-        significance = False
+        difference = True
         
-    return (significance, (t, p))
+    return (difference, (t, p))
     
     
     
