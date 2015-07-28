@@ -9,5 +9,9 @@ def compute_r_squared(data, predictions):
     # that you might find useful, but you don't have to use them.
 
     # YOUR CODE GOES HERE
+    
+    
+    r_squared = 1 - (np.square(data - predictions).sum() / np.square(data - data.mean()).sum())
+
 
     return r_squared
